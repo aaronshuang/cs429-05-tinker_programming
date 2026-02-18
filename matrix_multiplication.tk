@@ -1,28 +1,28 @@
 .code
-	clr r0               ; r0 = 0 (Constant for input port)
+	clr r0 ; r0 = 0 (Constant for input port)
 
-	in r1, r0            ; Read N 
-	mul r4, r1, r1       ; r4 = N*N (Total elements) 
+	in r1, r0 ; Read N 
+	mul r4, r1, r1 ; r4 = N*N (Total elements) 
 	
 	; Calculate Input Limit (N*N - 1)
-	mov r5, r4           ; r5 = N*N 
-	subi r5, 1           ; r5 = r5 - 1 
+	mov r5, r4 ; r5 = N*N 
+	subi r5, 1 ; r5 = r5 - 1 
 
 	; Calculate Loop Limit (N - 1)
-	mov r6, r1           ; r6 = N
-	subi r6, 1           ; r6 = r6 - 1
+	mov r6, r1 ; r6 = N
+	subi r6, 1 ; r6 = r6 - 1
 
 	; Calculate Base Addresses
-	ld r2, 65536         ; base A = 0x10000 (Decimal) 
+	ld r2, 65536 ; base A = 0x10000 (Decimal) 
 	
-	mov r3, r4           ; copy N*N
-	shftli r3, 3         ; r3 = r3 * 8 size of matrix contents
-	add r3, r2, r3       ; r3 = Base A + Offset
+	mov r3, r4 ; copy N*N
+	shftli r3, 3 ; r3 = r3 * 8 size of matrix contents
+	add r3, r2, r3 ; r3 = Base A + Offset
 
 	; Input Matrix A
-	clr r10              ; counter = 0
+	clr r10 ; counter = 0
 	ld r20, :input_b_setup ; load jump target after loop
-	ld r25, :input_a     ; load loop label
+	ld r25, :input_a ; load loop label
 
 :input_a
 	brgt r20, r10, r5 ; if counter > Limit, switch to prepare matrix B
@@ -76,15 +76,15 @@
 	ld r13, 0 ; Sum = 0 (Accumulator)
 
 :inner
-	brgt r24, r9, r6     ; If k > N-1, Print Sum
+	brgt r24, r9, r6 ; If k > N-1, Print Sum
 
 	; Load A[i][k]
 	; Addr = Base A + (i*N + k)*8
-	mul r14, r7, r1      ; r14 = i * N
-	add r14, r14, r9     ; r14 = r14 + k
-	shftli r14, 3        ; r14 = r14 * 8
-	add r14, r2, r14     ; r14 = Base A + Offset
-	mov r15, (r14)(0)    ; Load A 
+	mul r14, r7, r1 ; r14 = i * N
+	add r14, r14, r9 ; r14 = r14 + k
+	shftli r14, 3 ; r14 = r14 * 8
+	add r14, r2, r14 ; r14 = Base A + Offset
+	mov r15, (r14)(0) ; Load A 
 
 	; load B[k][j]
 	; Addr = Base B + (k*N + j)*8
@@ -94,8 +94,8 @@
 	add r14, r3, r14 ; r14 = Base B + Offset
 	mov r16, (r14)(0) ; Load B
 
-	mul r17, r15, r16 ; r17 = A * B (Integer Multiply) 
-	add r13, r13, r17 ; Sum += Result (Integer Add) 
+	mulf r17, r15, r16 ; r17 = A * B (Integer Multiply) 
+	addf r13, r13, r17 ; Sum += Result (Integer Add) 
 
 	addi r9, 1 ; k++
 	br r25 ; Jump to :inner
