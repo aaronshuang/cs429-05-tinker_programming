@@ -517,7 +517,7 @@ void pass_two(const char *interfile, const char *outfile, SymbolTable *t, struct
 
     char line[MAX_LINE];
     bool in_code = true;
-    uint64_t addr = 0x1000;
+    // uint64_t addr = 0x1000;
 
     uint64_t code_file_offset = sizeof(struct tinker_file_header);
     uint64_t data_file_offset = code_file_offset + header.code_seg_size;
@@ -547,8 +547,8 @@ void pass_two(const char *interfile, const char *outfile, SymbolTable *t, struct
             uint64_t bits = (uint64_t)sv;
             fseek(out, data_file_offset, SEEK_SET);
             fwrite(&bits, 8, 1, out);
-            data_file_offset = ftell(out);
-            addr += 8;
+            data_file_offset += 8;
+            // addr += 8;
             continue;
         }
 
@@ -705,8 +705,8 @@ void pass_two(const char *interfile, const char *outfile, SymbolTable *t, struct
 
         fseek(out, code_file_offset, SEEK_SET);
         fwrite(&instr, 4, 1, out);
-        code_file_offset = ftell(out);
-        addr += 4;
+        code_file_offset += 4;
+        // addr += 4;
     }
 
     fclose(in);
