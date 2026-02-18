@@ -1,179 +1,179 @@
 .code
 	clr r0 
-	; r0 = 0 (Constant for input port)
-
+; r0 = 0 (Constant for input port)
+;
 	in r1, r0 ; Read N 
 	mul r4, r1, r1 
-	; r4 = N*N (Total elements) 
-	
-	; Calculate Input Limit (N*N - 1)
+; r4 = N*N (Total elements) 
+;
+; Calculate Input Limit (N*N - 1)
 	mov r5, r4 
-	; r5 = N*N 
+; r5 = N*N 
 	subi r5, 1 
-	; r5 = r5 - 1 
-
-	; Calculate Loop Limit (N - 1)
+; r5 = r5 - 1 
+;
+; Calculate Loop Limit (N - 1)
 	mov r6, r1 
-	; r6 = N
+; r6 = N
 	subi r6, 1 
-	; r6 = r6 - 1
-
-	; Calculate Base Addresses
+; r6 = r6 - 1
+;
+; Calculate Base Addresses
 	ld r2, 65536 
-	; base A = 0x10000 (Decimal) 
-	
+; base A = 0x10000 (Decimal) 
+;
 	mov r3, r4 
-	; copy N*N
+; copy N*N
 	shftli r3, 3 
-	; r3 = r3 * 8 size of matrix contents
+; r3 = r3 * 8 size of matrix contents
 	add r3, r2, r3 
-	; r3 = Base A + Offset
-
-	; Input Matrix A
+; r3 = Base A + Offset
+;
+; Input Matrix A
 	clr r10 
-	; counter = 0
+; counter = 0
 	ld r20, :input_b_setup 
-	; load jump target after loop
+; load jump target after loop
 	ld r25, :input_a 
-	; load loop label
-
+; load loop label
+;
 :input_a
 	brgt r20, r10, r5 
-	; if counter > Limit, switch to prepare matrix B
+; if counter > Limit, switch to prepare matrix B
 	in r11, r0 
-	; read integer value
-	
+; read integer value
+;
 	mov r12, r10 
-	; r12 = Counter
+; r12 = Counter
 	shftli r12, 3 
-	; r12 = Counter * 8
+; r12 = Counter * 8
 	add r12, r2, r12 
-	; r12 = Base A + Offset
+; r12 = Base A + Offset
 	mov (r12)(0), r11 
-	; Store in RAM [cite: 387]
-	
+; Store in RAM [cite: 387]
+;
 	addi r10, 1 
-	; Counter++
+; Counter++
 	br r25 
-	; Loop back
-
-	; Input Matrix B
+; Loop back
+;
+; Input Matrix B
 :input_b_setup
 	clr r10 
-	; Reset Counter
+; Reset Counter
 	ld r20, :calc_setup 
-	; Load Target
+; Load Target
 	ld r25, :input_b 
-	; Load Loop Label
-
+; Load Loop Label
+;
 :input_b
 	brgt r20, r10, r5 
-	; If Counter > Limit, start Calc
+; If Counter > Limit, start Calc
 	in r11, r0 
-	; Read Integer Value
-
+; Read Integer Value
+;
 	mov r12, r10
 	shftli r12, 3 
-	; r12 = Counter * 8
+; r12 = Counter * 8
 	add r12, r3, r12 
-	; r12 = Base B + Offset
+; r12 = Base B + Offset
 	mov (r12)(0), r11 
-	; Store in RAM
-	
+; Store in RAM
+;
 	addi r10, 1 
-	; Counter++
+; Counter++
 	br r25 
-	; Loop back
-
-	; Triple Loop for computing the calculation
+; Loop back
+;
+; Triple Loop for computing the calculation
 :calc_setup
 	clr r7 
-	; i = 0 (Outer Loop)
-	
-	; Load Jump Targets for brgt
+; i = 0 (Outer Loop)
+;
+; Load Jump Targets for brgt
 	ld r22, :finish 
-	; Outer Exit Target
+; Outer Exit Target
 	ld r23, :next_row 
-	; Middle Exit Target
+; Middle Exit Target
 	ld r24, :print_sum 
-	; Inner Exit Target
+; Inner Exit Target
 	ld r25, :inner 
-	; Inner Loop Label
+; Inner Loop Label
 	ld r26, :middle 
-	; Middle Loop Label
+; Middle Loop Label
 	ld r27, :outer 
-	; Outer Loop Label
-
+; Outer Loop Label
+;
 :outer
 	brgt r22, r7, r6 
-	; If i > N-1, Finish
+; If i > N-1, Finish
 	clr r8 
-	; j = 0 (Middle Loop)
-
+; j = 0 (Middle Loop)
+;
 :middle
 	brgt r23, r8, r6 
-	; If j > N-1, Next Row
+; If j > N-1, Next Row
 	clr r9 
-	; k = 0 (Inner Loop)
+; k = 0 (Inner Loop)
 	ld r13, 0 
-	; Sum = 0 (Accumulator)
-
+; Sum = 0 (Accumulator)
+;
 :inner
 	brgt r24, r9, r6 
-	; If k > N-1, Print Sum
-
-	; Load A[i][k]
-	; Addr = Base A + (i*N + k)*8
+; If k > N-1, Print Sum
+;
+; Load A[i][k]
+; Addr = Base A + (i*N + k)*8
 	mul r14, r7, r1 
-	; r14 = i * N
+; r14 = i * N
 	add r14, r14, r9 
-	; r14 = r14 + k
+; r14 = r14 + k
 	shftli r14, 3 
-	; r14 = r14 * 8
+; r14 = r14 * 8
 	add r14, r2, r14 
-	; r14 = Base A + Offset
+; r14 = Base A + Offset
 	mov r15, (r14)(0) 
-	; Load A 
-
-	; load B[k][j]
-	; Addr = Base B + (k*N + j)*8
+; Load A 
+;
+; load B[k][j]
+; Addr = Base B + (k*N + j)*8
 	mul r14, r9, r1 
-	; r14 = k * N
+; r14 = k * N
 	add r14, r14, r8 
-	; r14 = r14 + j
+; r14 = r14 + j
 	shftli r14, 3 
-	; r14 = r14 * 8
+; r14 = r14 * 8
 	add r14, r3, r14 
-	; r14 = Base B + Offset
+; r14 = Base B + Offset
 	mov r16, (r14)(0) 
-	; Load B
-
+; Load B
+;
 	mulf r17, r15, r16 
-	; r17 = A * B (Integer Multiply) 
+; r17 = A * B (Integer Multiply) 
 	addf r13, r13, r17 
-	; Sum += Result (Integer Add) 
+; Sum += Result (Integer Add) 
 
 	addi r9, 1 
-	; k++
+; k++
 	br r25 
-	; Jump to :inner
+; Jump to :inner
 
 :print_sum
 	ld r29, 1 
-	; Port 1 (Console Output)
+; Port 1 (Console Output)
 	out r29, r13 
-	; Output Integer Sum 
-	
+; Output Integer Sum 
+;	
 	addi r8, 1 
-	; j++
+; j++
 	br r26 
-	; Jump to :middle
-
+; Jump to :middle
+;
 :next_row
 	addi r7, 1 
-	; i++
+; i++
 	br r27 
-	; Jump to :outer
-
+; Jump to :outer
+;
 :finish
 	halt
