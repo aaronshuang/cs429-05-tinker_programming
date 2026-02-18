@@ -714,8 +714,8 @@ void pass_two(const char *interfile, const char *outfile, SymbolTable *t, struct
 }
 
 int main(int argc, char **argv) {
-    if (argc < 4) {
-        fprintf(stderr, "Usage: %s <input.tk> <intermediate.tk> <output.tko>\n", argv[0]);
+    if (argc < 3) {
+        fprintf(stderr, "Usage: %s <input.tk> <output.tko>\n", argv[0]);
         return 1;
     }
 
@@ -733,8 +733,8 @@ int main(int argc, char **argv) {
     struct tinker_file_header header = pass_one(argv[1], inter_tmp, table);
     pass_two(inter_tmp, out_tmp, table, header);
 
-    if (rename(inter_tmp, argv[2]) != 0) error_exit("rename intermediate failed");
-    if (rename(out_tmp, argv[3]) != 0) error_exit("rename output failed");
+    if (rename(inter_tmp, "intermediate.tk") != 0) error_exit("rename intermediate failed");
+    if (rename(out_tmp, argv[2]) != 0) error_exit("rename output failed");
 
     tmp_inter = NULL;
     tmp_out = NULL;

@@ -1,0 +1,65 @@
+.code
+	ld r6, :ENTRY
+	ld r7, :FIBO_FUNC 
+	ld r8, :FIBO_COMPUTE 
+	br r6 
+;
+;
+:FIBO_FUNC 
+; get arg from stack into r10 
+	mov r10, (r31)(0) 
+; 
+; check base case arg <= 1 
+	xor r1, r1, r1 
+	addi r1, 1 
+	brgt r8, r10, r1 
+	mov r0, r10 
+	return 
+; 
+:FIBO_COMPUTE
+; compute subproblem r10 - 1 
+	subi r31, 8 
+	push r10 
+	mov r1, r10 
+	subi r1, 1
+	push r1 
+	call r7
+	pop r1
+	pop r10 
+	mov r11, r0 
+	addi r31, 8 
+; 
+; compute subproblem r10 - 2 
+	subi r31, 8 
+	push r10 
+	push r11 
+	mov r1, r10 
+	subi r1, 2 
+	push r1 
+	call r7 	
+	pop r1 	
+	pop r11 
+	pop r10 
+	mov r12, r0 
+	addi r31, 8 
+; 
+; compute answer 
+	add r0, r11, r12 
+	return 
+; 
+; 
+; 
+:ENTRY
+; r10 is N 
+	xor r10, r10, r10 
+	xor r1, r1, r1 
+	in r10, r1 
+; call function 
+	push r10 
+	call r7 
+	pop r10 
+; at this point r0 has the answer 
+	xor r1, r1, r1
+	mov r1, 1 
+	out r1, r0 
+	halt
