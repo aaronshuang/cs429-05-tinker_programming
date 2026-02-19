@@ -1,0 +1,26 @@
+.code
+	clr r0
+	ld r29, 1
+	in r1, r0
+	ld r2, 2
+	ld r3, :loop_init
+	brgt r3, r1, r2
+	out r29, r1
+	halt
+:loop_init
+	subi r1, 1
+	clr r4
+	ld r5, 1
+	ld r6 1
+	ld r7, :loop
+	ld r8, :output
+:loop
+	brgt r8, r6, r1
+	add r9, r4, r5
+	mov r4, r5
+	mov r5, r9
+	addi r6, 1
+	br r7
+:output
+	out r29, r4
+	halt
