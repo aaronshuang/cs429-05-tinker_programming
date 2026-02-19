@@ -722,8 +722,8 @@ int main(int argc, char **argv) {
     char inter_tmp[512];
     char out_tmp[512];
 
-    snprintf(inter_tmp, sizeof(inter_tmp), "%s.tmp", argv[2]);
-    snprintf(out_tmp,   sizeof(out_tmp),   "%s.tmp", argv[3]);
+    snprintf(inter_tmp, sizeof(inter_tmp), "%s.tmp", argv[1]);
+    snprintf(out_tmp,   sizeof(out_tmp),   "%s.tmp", argv[2]);
 
     tmp_inter = inter_tmp;
     tmp_out   = out_tmp;
