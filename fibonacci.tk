@@ -2,16 +2,17 @@
 	clr r0
 	ld r29, 1
 	in r1, r0
-	ld r2, 2
+	ld r2, 1
 	ld r3, :loop_init
 	brgt r3, r1, r2
-	out r29, r1
+	clr r10
+	out r29, r10
 	halt
 :loop_init
-	subi r1, 1
+	subi r1, 2
 	clr r4
 	ld r5, 1
-	ld r6 1
+	clr r6
 	ld r7, :loop
 	ld r8, :output
 :loop
