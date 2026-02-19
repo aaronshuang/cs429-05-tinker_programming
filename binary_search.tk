@@ -1,0 +1,76 @@
+.code
+	clr r0
+	ld r30, 1
+	in r1, r0
+	ld r2, :start
+	clr r3
+	mov r4, r1
+	subi r4, 1
+	ld r5, :input
+	ld r6, :get_target
+:input
+	brgt r6, r3, r4
+	in r7, r0
+	mov r8, r3
+	shftli r8, 3
+	add r8, r2, r8
+	mov (r8)(0), r7
+	addi r3, 1
+	br r5
+:get_target
+	in r3, r0
+:prepare_bound
+	clr r4
+	mov r5, r1
+	subi r5, 1
+	ld r20, :binary_search
+	ld r21, :not_found
+	ld r22, :found
+	ld r23, :check_less
+	ld r24, :check_greater
+:binary_search
+	brgt r21, r4, r5
+	add r6, r4, r5
+	shftri r6, 1
+	mov r8, r6
+	shftli r8, 3
+	add r8, r2, r8
+	mov r7, (r8)(0)
+	brgt r23, r7, r3
+	brgt r24, r3, r7
+	br r22
+:check_less
+	mov r5, r6
+	subi r5, 1
+	br r20
+:check_greater
+	mov r4, r6
+	addi r4, 1
+	br r20
+:found
+	ld r25, 3
+	ld r26, 102
+	out r25, r26
+	ld r26, 111
+	out r25, r26
+	ld r26, 117
+	out r25, r26
+	ld r26, 110
+	out r25, r26
+	ld r26, 100
+	out r25, r26
+	halt
+:not_found
+	ld r25, 3
+	ld r26, 110
+	out r25, r26
+	ld r26, 111
+	out r25, r26
+	ld r26, 116
+	out r25, r26
+	ld r26, 32
+	out r25, r26
+	br r22
+.data
+:start
+	0
