@@ -2,5 +2,6 @@
 	halt
 :L0
 .data
-	1
-:L1
+	5
+.code
+	ld r1, :L0

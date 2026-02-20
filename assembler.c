@@ -256,6 +256,7 @@ struct tinker_file_header pass_one(const char *input, const char *interfile, Sym
             uint64_t next_section_in_code = in_code;
             while (fgets(next_line, sizeof(next_line), in)) {
                 if (!line_has_non_ws(next_line)) continue;
+                trim_line(next_line);
                 char *next_ptr = next_line;
                 while (isspace((unsigned char)*next_ptr)) next_ptr++;
                 if (strncmp(next_ptr, ".code", 5) == 0) {
