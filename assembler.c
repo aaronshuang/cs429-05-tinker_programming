@@ -267,6 +267,8 @@ struct tinker_file_header pass_one(const char *input, const char *interfile, Sym
                     next_section_in_code = false;
                     section_found = true;
                     continue;
+                } else if (*next_ptr == ':') {
+                    continue;
                 }
                 break;
             }
