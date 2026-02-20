@@ -1,0 +1,1 @@
+gcc -g -O0 ./tests/sim_unit_tests.c ./src/symbol_table.c -I./include -I./src -o ./build/sim_test_harness -lm

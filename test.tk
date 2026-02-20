@@ -1,0 +1,10 @@
+.code
+	brr :skip
+	addi r1, 1
+:skip
+.data
+:data_start
+.data
+	1
+.code
+	ld r2, :data_start

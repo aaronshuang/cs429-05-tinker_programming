@@ -1,0 +1,1 @@
+gcc -g -O0 ./tests/asm_unit_tests.c ./src/symbol_table.c -I./include -I./src -o ./build/asm_test_harness -lm
