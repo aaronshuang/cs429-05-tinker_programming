@@ -249,6 +249,25 @@ struct tinker_file_header pass_one(const char *input, const char *interfile, Sym
             char label[MAX_LABEL];
             if (sscanf(ptr+1, "%s", label) != 1) error_exit("Invalid label syntax");
             if (!is_valid_label_name(label)) error_exit("Invalid label name");
+            // Peek Ahead
+            uint64_t currentPosition = ftell(in);
+            char next_line[MAX_LINE];
+            bool section_found = false;
+            while (fgets(next_line, sizeof(next_line), in)) {
+                if (!line_has_non_ws(next_line)) continue;
+                char *next_ptr = next_line;
+                while (isspace((unsigned char)*next_ptr)) next_ptr++;
+                if (strncmp(next_ptr, ".code", 5) == 0) {
+                    in_code = true;
+                    section_found = true;
+                } else if (strncmp(next_ptr, ".data", 5) == 0) {
+                    in_code = false;
+                    section_found = true;
+                }
+                break;
+            }
+            fseek(in, currentPosition, SEEK_SET);
+
             uint64_t addr = in_code ? code_addr : data_addr;
             if (insert_label(t, label, addr) == 1) error_exit("duplicate label");
             continue;
